@@ -68,6 +68,14 @@ corr = raw_df.corr()
 plt.figure(figsize=(14, 8))
 sns.heatmap(corr, annot=True, linewidth=.5)
 
+# Label(col15) counts Pie chart #
+label = pd.DataFrame(raw_df["col15"].value_counts()).reset_index()
+label = label[label["index"] != 0.5]
+pie, ax = plt.subplots(figsize=[6, 6])
+colors = ['#ffb3e6','#DDA0DD']
+explode = (0.1, 0)
+plt.pie(x=label["col15"], autopct="%.f%%", labels=label["index"].astype(int), colors=colors, explode=explode, shadow=True, startangle=90, textprops={"fontsize":15})
+
 # Party with label(col15) Bar chart #
 party_label = raw_df.loc[raw_df["col15"] != 0.5, ["party", "col15"]]
 party_label.columns = ["party", "label"]
