@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
 
 ### Load Data ###
@@ -60,18 +61,26 @@ rfm_df_new = rfm_df[rfm_df["value_label"] == "new"]
 rfm_df = rfm_df[rfm_df["value_label"] != "new"]
 
 ## K-means model ##
-# K-means with best num of clusters #
+# K-means with best num of clusters by elbow method & silhouette analysis #
 wss = []
+silhouette_avg = []
 for i in range(1,11):
     kmeans = KMeans(n_clusters=i, init='k-means++', random_state=0)
-    kmeans.fit(rfm_df[["r", "f", "m"]])
+    kmeans_fit = kmeans.fit(rfm_df[["r", "f", "m"]])
     wss.append(kmeans.inertia_)
+    if i != 1:
+        silhouette_avg.append(silhouette_score(rfm_df[["r", "f", "m"]], kmeans_fit.labels_))
 
 plt.plot(range(1,11), wss, marker='o')
 plt.title('Elbow graph')
 plt.xlabel('Cluster number')
 plt.ylabel('WSS')
 # k=4
+plt.plot(range(2,11), silhouette_avg, marker='o', color='r')
+plt.title('Silhouette graph')
+plt.xlabel('Cluster number')
+plt.ylabel('Silhouette coefficient values')
+# k=9
 
 # k-means model #
 kmeans = KMeans(n_clusters=6, init='k-means++', random_state=0)
